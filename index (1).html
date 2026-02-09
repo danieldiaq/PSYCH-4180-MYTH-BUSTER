@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ForumThread - Community Discussion</title>
+    <style>
+        /* ========================================
+           STYLE GUIDE FOR EDITING:
+           - Find HTML comments like <!-- REPLACE: ... -->
+           - Replace placeholder text between those markers
+           - Subreddit name: Search for "r/AmITheAsshole"
+           - OP username: Search for "u/OP_USERNAME"
+           - Post title: Look for <!-- REPLACE: Post title -->
+           - Post body: Look for <!-- REPLACE: Post body -->
+           - Comments: Look for <!-- REPLACE: Comment 01 text --> etc.
+           - Times/scores: Replace "TIME_AGO", "SCORE" values
+           ======================================== */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+            background-color: #dae0e6;
+            color: #1c1c1c;
+            line-height: 1.5;
+        }
+
+        /* Top Navigation Bar */
+        .top-bar {
+            background-color: #fff;
+            border-bottom: 1px solid #ccc;
+            padding: 0 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 48px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        
+        .top-bar-logo {
+            font-weight: 700;
+            font-size: 18px;
+            color: #ff4500;
+        }
+
+        .top-bar-search {
+            flex: 1;
+            max-width: 600px;
+            margin: 0 20px;
+        }
+
+        .top-bar-search input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: #f6f7f8;
+        }
+
+        /* Main Content Container */
+        .container {
+            max-width: 740px;
+            margin: 20px auto;
+            padding: 0 16px;
+        }
+
+        /* Post Card */
+        .post-card {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 16px;
+        }
+
+        .post-header {
+            padding: 12px 16px 8px 16px;
+            border-bottom: 1px solid #edeff1;
+        }
+
+        .post-subreddit {
+            font-size: 12px;
+            font-weight: 700;
+            color: #1c1c1c;
+            margin-bottom: 4px;
+        }
+
+        .post-meta {
+            font-size: 12px;
+            color: #7c7c7c;
+        }
+
+        .post-meta a {
+            color: #7c7c7c;
+            text-decoration: none;
+        }
+
+        .post-meta a:hover {
+            text-decoration: underline;
+        }
+
+        .post-content {
+            padding: 8px 16px 16px 16px;
+        }
+
+        .post-title {
+            font-size: 20px;
+            font-weight: 500;
+            color: #1c1c1c;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .post-body {
+            font-size: 14px;
+            color: #1c1c1c;
+            margin-bottom: 12px;
+        }
+
+        .post-body p {
+            margin-bottom: 12px;
+        }
+
+        .post-body ul {
+            margin-left: 20px;
+            margin-bottom: 12px;
+        }
+
+        .post-edit {
+            background-color: #f6f7f8;
+            border-left: 4px solid #0079d3;
+            padding: 12px;
+            margin-top: 12px;
+            font-size: 14px;
+        }
+
+        .post-edit strong {
+            font-weight: 700;
+        }
+
+        .post-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0 8px 8px 8px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #878a8c;
+        }
+
+        .post-action-btn {
+            padding: 6px 8px;
+            border-radius: 2px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: none;
+            border: none;
+            color: #878a8c;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .post-action-btn:hover {
+            background-color: #f6f7f8;
+        }
+
+        /* Comments Section */
+        .comments-section {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 16px;
+        }
+
+        .comments-sort {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1c1c1c;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #edeff1;
+        }
+
+        /* Comment Structure */
+        .comment {
+            margin-bottom: 16px;
+        }
+
+        .comment-content {
+            display: flex;
+            gap: 8px;
+        }
+
+        .comment-vote {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding-top: 4px;
+        }
+
+        .vote-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 2px;
+            color: #878a8c;
+            font-size: 16px;
+            line-height: 1;
+        }
+
+        .vote-btn:hover {
+            color: #ff4500;
+        }
+
+        .comment-score {
+            font-size: 12px;
+            font-weight: 700;
+            color: #1c1c1c;
+        }
+
+        .comment-body-wrapper {
+            flex: 1;
+        }
+
+        .comment-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            margin-bottom: 4px;
+            flex-wrap: wrap;
+        }
+
+        .comment-author {
+            font-weight: 700;
+            color: #1c1c1c;
+        }
+
+        .comment-badge {
+            background-color: #0079d3;
+            color: #fff;
+            padding: 2px 6px;
+            border-radius: 2px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .comment-time {
+            color: #7c7c7c;
+        }
+
+        .comment-text {
+            font-size: 14px;
+            color: #1c1c1c;
+            margin-bottom: 8px;
+        }
+
+        .comment-text p {
+            margin-bottom: 8px;
+        }
+
+        .comment-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #878a8c;
+        }
+
+        .comment-action {
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: #878a8c;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 0;
+        }
+
+        .comment-action:hover {
+            text-decoration: underline;
+        }
+
+        /* Nested Replies */
+        .comment-replies {
+            margin-left: 24px;
+            border-left: 2px solid #edeff1;
+            padding-left: 8px;
+            margin-top: 16px;
+        }
+
+        /* Collapsed Comment */
+        .comment-collapsed {
+            padding: 8px;
+            background-color: #f6f7f8;
+            border-radius: 4px;
+            margin-bottom: 16px;
+        }
+
+        .comment-collapsed-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: #7c7c7c;
+        }
+
+        .expand-btn {
+            background: none;
+            border: none;
+            color: #0079d3;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .expand-btn:hover {
+            text-decoration: underline;
+        }
+
+        .comment-hidden {
+            display: none;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 12px;
+            color: #7c7c7c;
+            background-color: #fff;
+            border-top: 1px solid #ccc;
+            margin-top: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .top-bar-search {
+                display: none;
+            }
+
+            .container {
+                margin: 10px auto;
+            }
+
+            .comment-replies {
+                margin-left: 12px;
+                padding-left: 6px;
+            }
+
+            .post-title {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation Bar -->
+    <div class="top-bar">
+        <div class="top-bar-logo">ForumThread</div>
+        <div class="top-bar-search">
+            <input type="search" placeholder="Search..." aria-label="Search">
+        </div>
+    </div>
+
+<!-- Main Content -->
+<div class="container">
+  <!-- Post Card -->
+  <div class="post-card">
+    <div class="post-header">
+      <div class="post-subreddit">r/AmITheAsshole</div>
+      <div class="post-meta">Posted by <a href="#">u/Robin</a> · 6 hours ago</div>
+    </div>
+
+    <div class="post-content">
+      <h1 class="post-title">AITA for making a psychological profile to solve a case?</h1>
+
+      <div class="post-body">
+        <p><b>Hi everyone,</b></p>
+
+        <p>
+          I hosted a small reunion get together at my apartment last night with some old network friends. Everyone there works in some kind of scientific
+          field (psychology, neuroscience, data analysis, etc.), so I would consider all of us completely 100% ethical, and I do not think anyone of us
+          would ever lie in any setting for our own personal benefit, even if it was the right thing to do.
+        </p>
+
+        <p>
+          Anyways at one point, I went to play music, and my (very expensive) speaker was gone. No one admitted to taking it, and we searched the
+          apartment for a while with no luck.
+        </p>
+
+        <p>
+          I suggested we try to draw up a psychological profile of who would be most likely to take it based on behavior, personality patterns, and prior
+          tendencies. I had previously heard at work that psychological profiles can be used to solve cases, and I know some people claim that it is just a
+          myth but I am pretty sure it is true.
+        </p>
+
+        <p>
+          I want to be clear: I wasn’t accusing anyone, I was just using logical inference to solve the case of my missing speaker.
+        </p>
+
+        <p>
+          Looking back, I can kinda see that this relied heavily on inductive reasoning (drawing conclusions about an individual based on generalized
+          behavioral patterns) but we still went ahead with it, because it was the best option. We had no physical evidence, so how else were we supposed to
+          find out who stole my speaker?
+        </p>
+
+        <p>The profile we came up with included these traits:</p>
+        <ul>
+          <li>Technical skill</li>
+          <li>Comfort bending rules</li>
+          <li>Desire for recognition</li>
+          <li>History of elaborate planning</li>
+          <li>Impulsive personality</li>
+          <li>Antisocial personality disorder behaviours</li>
+          <li>No issue lying/deceiving your friends</li>
+        </ul>
+
+        <p>
+          One friend in particular (let’s call him X) matched a lot of these traits. Some people started questioning him more directly. He got defensive and upset.
+        </p>
+
+        <p>
+          Eventually, things got a little tense. Once the profile was established, it became the main way people interpreted what was happening. In retrospect
+          we focused less on the physical environment, timeline, and who had moved through the room, and more so on who seemed to match our psychological
+          profile to find out who stole my speaker.
+        </p>
+
+        <p>
+          I know one of you will probably say that we used confirmation bias, and that we had tunnel vision, but new information was interpreted in ways that
+          supported the profile, so we went with it.
+        </p>
+
+        <p>
+          So… <b>AITA for suggesting psychological profiling to solve this case instead of just letting it go?</b>
+        </p>
+        <p>I genuinely thought it was a rational approach.</p>
+      </div>
+
+      <!-- EDIT / UPDATE -->
+      <div class="post-edit">
+        <p>
+          <strong>EDIT / UPDATE</strong> Update: We found the speaker. It was accidentally knocked off the table, cracked, and then hidden in a closet by
+          someone who did not want to get blamed for breaking it. No one stole anything. Also was able to get it fixed, I had insurance on it lol.
+        </p>
+        <br>
+        <p>
+          Reflecting on this, I can see that once we started profiling, it probably made it harder for anyone to speak up. The moment a psychological
+          profile was introduced, it stopped working as a hypothesis, and started becoming a label.
+        </p>
+        <br>
+
+        <p>
+          One of my friends told me that research in criminal psychology consistently shows that profiling lacks strong predictive validity, and is highly
+          vulnerable to subjective interpretation.
+        </p>
+        <br>
+
+        <p>
+          In this situation, the profile did not help us solve the problem. Instead, it just damaged our relationship with our buddy X (we made it up to him
+          with food and drinks later). We only reached clarity once we stopped accusing based on a profile, and started asking what physically could have
+          happened in the room.
+        </p>
+        <br>
+
+        <p>
+          I still think profiling can be a really useful tool in certain situations, but it shouldn’t become the basis for solving cases and accusing someone
+          without physical evidence, contextual reconstruction, and alternative explanations.
+        </p>
+                    <span class="comment-time">35 mins ago</span>
+
+      </div>
+    </div>
+
+    <div class="post-actions">
+      <button class="post-action-btn" aria-label="Upvote">▲ 12.5k</button>
+      <button class="post-action-btn" aria-label="Downvote">▼</button>
+      <button class="post-action-btn">💬 856 Comments</button>
+      <button class="post-action-btn">Share</button>
+      <button class="post-action-btn">Save</button>
+    </div>
+  </div>
+
+  <!-- Comments Section -->
+  <div class="comments-section">
+    <div class="comments-sort">Sort: Best</div>
+
+    <!-- COMMENT 01 -->
+    <div class="comment">
+      <div class="comment-content">
+        <div class="comment-vote">
+          <button class="vote-btn" aria-label="Upvote">▲</button>
+          <span class="comment-score">9.6k</span>
+          <button class="vote-btn" aria-label="Downvote">▼</button>
+        </div>
+
+        <div class="comment-body-wrapper">
+          <div class="comment-header">
+            <span class="comment-author">u/Spongebob</span>
+            <span class="comment-badge">🏆 Helpful</span>
+            <span class="comment-time">4h ago</span>
+          </div>
+
+          <div class="comment-text">
+            <p>
+              <b>NTA.</b> Profiling is literally used in criminal investigations. People are uncomfortable when logic points toward them, but that does not
+              mean the logic is wrong. You did not accuse, you inferred.
+            </p>
+          </div>
+
+          <div class="comment-actions">
+            <button class="comment-action">Reply</button>
+            <button class="comment-action">Share</button>
+            <button class="comment-action">Report</button>
+            <button class="comment-action">Save</button>
+          </div>
+
+          <!-- Nested Reply Level 1 -->
+          <div class="comment-replies">
+            <div class="comment">
+              <div class="comment-content">
+                <div class="comment-vote">
+                  <button class="vote-btn" aria-label="Upvote">▲</button>
+                  <span class="comment-score">3.2k</span>
+                  <button class="vote-btn" aria-label="Downvote">▼</button>
+                </div>
+
+                <div class="comment-body-wrapper">
+                  <div class="comment-header">
+                    <span class="comment-author">u/PatternFinder</span>
+                    <span class="comment-time">3h ago</span>
+                  </div>
+
+                  <div class="comment-text">
+                    <p>
+                      Exactly. Profiling is not random guessing, it is pattern recognition. People hear “profile” and think it is vibes, but it is based on
+                      observed behavior over time. If someone fits multiple traits, that is not coincidence.
+                    </p>
+                  </div>
+
+                  <div class="comment-actions">
+                    <button class="comment-action">Reply</button>
+                    <button class="comment-action">Share</button>
+                    <button class="comment-action">Report</button>
+                    <button class="comment-action">Save</button>
+                  </div>
+
+                  <!-- Nested Reply Level 2 -->
+                  <div class="comment-replies">
+                    <div class="comment">
+                      <div class="comment-content">
+                        <div class="comment-vote">
+                          <button class="vote-btn" aria-label="Upvote">▲</button>
+                          <span class="comment-score">1.8k</span>
+                          <button class="vote-btn" aria-label="Downvote">▼</button>
+                        </div>
+
+                        <div class="comment-body-wrapper">
+                          <div class="comment-header">
+                            <span class="comment-author">u/Occams_Shaver2</span>
+                            <span class="comment-time">2h ago</span>
+                          </div>
+
+                          <div class="comment-text">
+                            <p>
+                              Thank you. Everyone here is acting like probability does not matter. No one is saying it is 100%, but ignoring behavioral
+                              likelihood because it is “uncomfortable” makes no sense. Investigations are about narrowing possibilities. Usually the simplest
+                              explanation is the correct one.
+                            </p>
+                          </div>
+
+                          <div class="comment-actions">
+                            <button class="comment-action">Reply</button>
+                            <button class="comment-action">Share</button>
+                            <button class="comment-action">Report</button>
+                            <button class="comment-action">Save</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- /Nested Reply Level 2 -->
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /Nested Reply Level 1 -->
+        </div>
+      </div>
+    </div>
+
+    <!-- COMMENT 02 -->
+    <div class="comment">
+      <div class="comment-content">
+        <div class="comment-vote">
+          <button class="vote-btn" aria-label="Upvote">▲</button>
+          <span class="comment-score">7.4k</span>
+          <button class="vote-btn" aria-label="Downvote">▼</button>
+        </div>
+
+        <div class="comment-body-wrapper">
+          <div class="comment-header">
+            <span class="comment-author">u/Doof3nshmirtz</span>
+            <span class="comment-time">5h ago</span>
+          </div>
+
+          <div class="comment-text">
+            <p>
+              Honestly, this sounds like people reacting emotionally instead of rationally. Profiling is not about blaming someone, it is about identifying
+              likelihoods. If certain traits show up repeatedly, it makes sense to factor that in when something goes missing.
+            </p>
+          </div>
+
+          <div class="comment-actions">
+            <button class="comment-action">Reply</button>
+            <button class="comment-action">Share</button>
+            <button class="comment-action">Report</button>
+            <button class="comment-action">Save</button>
+          </div>
+
+          <!-- Nested Reply -->
+          <div class="comment-replies">
+            <div class="comment">
+              <div class="comment-content">
+                <div class="comment-vote">
+                  <button class="vote-btn" aria-label="Upvote">▲</button>
+                  <span class="comment-score">2.1k</span>
+                  <button class="vote-btn" aria-label="Downvote">▼</button>
+                </div>
+
+                <div class="comment-body-wrapper">
+                  <div class="comment-header">
+                    <span class="comment-author">u/Ferb</span>
+                    <span class="comment-time">3h ago</span>
+                  </div>
+
+                  <div class="comment-text">
+                    <p>
+                      Agreed. When you do not have direct evidence, you work with probabilities. That does not mean anyone is guilty, it means you are trying
+                      to narrow possibilities instead of guessing randomly.
+                    </p>
+                  </div>
+
+                  <div class="comment-actions">
+                    <button class="comment-action">Reply</button>
+                    <button class="comment-action">Share</button>
+                    <button class="comment-action">Report</button>
+                    <button class="comment-action">Save</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /Nested Reply -->
+        </div>
+      </div>
+    </div>
+
+    <!-- COMMENT 03 -->
+    <div class="comment">
+      <div class="comment-content">
+        <div class="comment-vote">
+          <button class="vote-btn" aria-label="Upvote">▲</button>
+          <span class="comment-score">5.8k</span>
+          <button class="vote-btn" aria-label="Downvote">▼</button>
+        </div>
+
+        <div class="comment-body-wrapper">
+          <div class="comment-header">
+            <span class="comment-author">u/Dora</span>
+            <span class="comment-badge">🏆 Helpful</span>
+            <span class="comment-time">4h ago</span>
+          </div>
+
+          <div class="comment-text">
+            <p>I think people misunderstand what profiling is.</p>
+            <p>
+              It is not “this person did it,” it is “given what we know, this explanation seems more plausible than others.” Humans infer traits from
+              behavior all the time. Profiling just makes that process explicit.
+            </p>
+            <p>
+              The problem is when people treat the profile like proof, instead of a hypothesis to test against the scene and the timeline.
+            </p>
+          </div>
+
+          <div class="comment-actions">
+            <button class="comment-action">Reply</button>
+            <button class="comment-action">Share</button>
+            <button class="comment-action">Report</button>
+            <button class="comment-action">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMMENT 04 -->
+    <div class="comment">
+      <div class="comment-content">
+        <div class="comment-vote">
+          <button class="vote-btn" aria-label="Upvote">▲</button>
+          <span class="comment-score">4.2k</span>
+          <button class="vote-btn" aria-label="Downvote">▼</button>
+        </div>
+
+        <div class="comment-body-wrapper">
+          <div class="comment-header">
+            <span class="comment-author">u/Lisa</span>
+            <span class="comment-time">3h ago</span>
+          </div>
+
+          <div class="comment-text">
+            <p>
+              I am conflicted. I get wanting a framework, but those traits are broad. They do not explain when or how anything happened. They just describe
+              a type of person.
+            </p>
+            <p>That is a weak substitute for evidence, and it can easily turn into tunnel vision.</p>
+          </div>
+
+          <div class="comment-actions">
+            <button class="comment-action">Reply</button>
+            <button class="comment-action">Share</button>
+            <button class="comment-action">Report</button>
+            <button class="comment-action">Save</button>
+          </div>
+
+          <!-- Nested Replies -->
+          <div class="comment-replies">
+            <div class="comment">
+              <div class="comment-content">
+                <div class="comment-vote">
+                  <button class="vote-btn" aria-label="Upvote">▲</button>
+                  <span class="comment-score">1.5k</span>
+                  <button class="vote-btn" aria-label="Downvote">▼</button>
+                </div>
+
+                <div class="comment-body-wrapper">
+                  <div class="comment-header">
+                    <span class="comment-author">u/Jake</span>
+                    <span class="comment-time">2h ago</span>
+                  </div>
+
+                  <div class="comment-text">
+                    <p>
+                      Yeah, it skips the boring but important stuff. Timeline, movement through space, physical layout. Personality feels explanatory, but it
+                      does not reconstruct events.
+                    </p>
+                  </div>
+
+                  <div class="comment-actions">
+                    <button class="comment-action">Reply</button>
+                    <button class="comment-action">Share</button>
+                    <button class="comment-action">Report</button>
+                    <button class="comment-action">Save</button>
+                  </div>
+
+                  <!-- Level 2 Nested Reply -->
+                  <div class="comment-replies">
+                    <div class="comment">
+                      <div class="comment-content">
+                        <div class="comment-vote">
+                          <button class="vote-btn" aria-label="Upvote">▲</button>
+                          <span class="comment-score">892</span>
+                          <button class="vote-btn" aria-label="Downvote">▼</button>
+                        </div>
+
+                        <div class="comment-body-wrapper">
+                          <div class="comment-header">
+                            <span class="comment-author">u/Finn</span>
+                            <span class="comment-time">1h ago</span>
+                          </div>
+
+                          <div class="comment-text">
+                            <p>
+                              This is a fundamental attribution error. Explaining a situation with a personality based profile instead of context. Once that
+                              happens, every new detail gets interpreted to fit the same story.
+                            </p>
+                          </div>
+
+                          <div class="comment-actions">
+                            <button class="comment-action">Reply</button>
+                            <button class="comment-action">Share</button>
+                            <button class="comment-action">Report</button>
+                            <button class="comment-action">Save</button>
+                          </div>
+
+                          <!-- Level 3 Nested Reply -->
+                          <div class="comment-replies">
+                            <div class="comment">
+                              <div class="comment-content">
+                                <div class="comment-vote">
+                                  <button class="vote-btn" aria-label="Upvote">▲</button>
+                                  <span class="comment-score">634</span>
+                                  <button class="vote-btn" aria-label="Downvote">▼</button>
+                                </div>
+
+                                <div class="comment-body-wrapper">
+                                  <div class="comment-header">
+                                    <span class="comment-author">u/Bugs</span>
+                                    <span class="comment-time">45m ago</span>
+                                  </div>
+
+                                  <div class="comment-text">
+                                    <p>
+                                      Also, once someone feels labeled, it changes how they act. People go quiet or defensive because they feel judged. Then
+                                      that gets interpreted as suspicious. Profiling can shape behavior, not just interpret it.
+                                    </p>
+                                  </div>
+
+                                  <div class="comment-actions">
+                                    <button class="comment-action">Reply</button>
+                                    <button class="comment-action">Share</button>
+                                    <button class="comment-action">Report</button>
+                                    <button class="comment-action">Save</button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <!-- /Level 3 -->
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- /Level 2 -->
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /Nested Replies -->
+        </div>
+      </div>
+    </div>
+
+    <!-- COMMENT 05 -->
+    <div class="comment">
+      <div class="comment-content">
+        <div class="comment-vote">
+          <button class="vote-btn" aria-label="Upvote">▲</button>
+          <span class="comment-score">3.1k</span>
+          <button class="vote-btn" aria-label="Downvote">▼</button>
+        </div>
+
+        <div class="comment-body-wrapper">
+          <div class="comment-header">
+            <span class="comment-author">u/Pingu</span>
+            <span class="comment-time">2h ago</span>
+          </div>
+
+          <div class="comment-text">
+            <p>
+              After the update, I can see the issue. Y'all only got clarity once u stopped asking who would do this and started asking what physically could
+              have happened. That shift mattered more than any kind of profile.
+            </p>
+          </div>
+
+          <div class="comment-actions">
+            <button class="comment-action">Reply</button>
+            <button class="comment-action">Share</button>
+            <button class="comment-action">Report</button>
+            <button class="comment-action">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMMENT 06 -->
+    <div class="comment">
+      <div class="comment-content">
+        <div class="comment-vote">
+          <button class="vote-btn" aria-label="Upvote">▲</button>
+          <span class="comment-score">2.7k</span>
+          <button class="vote-btn" aria-label="Downvote">▼</button>
+        </div>
+
+        <div class="comment-body-wrapper">
+          <div class="comment-header">
+            <span class="comment-author">u/Patrick</span>
+            <span class="comment-time">2h ago</span>
+          </div>
+
+          <div class="comment-text">
+            <p>
+              Serious question: did anyone retrace movement through the room before profiling? Who walked past the table, where the stand was, whether it
+              could have fallen? Reconstruction usually beats guessing motives.
+            </p>
+          </div>
+
+          <div class="comment-actions">
+            <button class="comment-action">Reply</button>
+            <button class="comment-action">Share</button>
+            <button class="comment-action">Report</button>
+            <button class="comment-action">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMMENT 07 -->
+    <div class="comment">
+      <div class="comment-content">
+        <div class="comment-vote">
+          <button class="vote-btn" aria-label="Upvote">▲</button>
+          <span class="comment-score">2.3k</span>
+          <button class="vote-btn" aria-label="Downvote">▼</button>
+        </div>
+
+        <div class="comment-body-wrapper">
+          <div class="comment-header">
+            <span class="comment-author">u/Doofenshmirtz</span>
+            <span class="comment-time">1h ago</span>
+          </div>
+
+          <div class="comment-text">
+            <p>
+              I do not think suggesting profiling automatically makes you an AH, but it became the dominant lens too fast. Once everyone agreed on a
+              profile, other explanations stopped being taken seriously. That is where it became tunnel vision.
+            </p>
+          </div>
+
+          <div class="comment-actions">
+            <button class="comment-action">Reply</button>
+            <button class="comment-action">Share</button>
+            <button class="comment-action">Report</button>
+            <button class="comment-action">Save</button>
+          </div>
+
+          <!-- Nested Reply -->
+          <div class="comment-replies">
+            <div class="comment">
+              <div class="comment-content">
+                <div class="comment-vote">
+                  <button class="vote-btn" aria-label="Upvote">▲</button>
+                  <span class="comment-score">1.2k</span>
+                  <button class="vote-btn" aria-label="Downvote">▼</button>
+                </div>
+
+                <div class="comment-body-wrapper">
+                  <div class="comment-header">
+                    <span class="comment-author">u/Lisa</span>
+                    <span class="comment-time">40m ago</span>
+                  </div>
+
+                  <div class="comment-text">
+                    <p>
+                      Exactly. Profiling can be a starting point, but the moment it feels more convincing than physical, and other forms of concrete evidence,
+                      you are not investigating. You are telling a story and perpetuating a narrative.
+                    </p>
+                  </div>
+
+                  <div class="comment-actions">
+                    <button class="comment-action">Reply</button>
+                    <button class="comment-action">Share</button>
+                    <button class="comment-action">Report</button>
+                    <button class="comment-action">Save</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /Nested Reply -->
+        </div>
+      </div>
+    </div>
+
+    <!-- COMMENT 08 -->
+    <div class="comment">
+      <div class="comment-content">
+        <div class="comment-vote">
+          <button class="vote-btn" aria-label="Upvote">▲</button>
+          <span class="comment-score">1.9k</span>
+          <button class="vote-btn" aria-label="Downvote">▼</button>
+        </div>
+
+        <div class="comment-body-wrapper">
+          <div class="comment-header">
+            <span class="comment-author">u/Bugs</span>
+            <span class="comment-time">3h ago</span>
+          </div>
+
+          <div class="comment-text">
+            <p>
+              Not proud of it, but I can see why someone would hide the broken speaker. Once everyone is staring at you and reading intent into everything,
+              admitting a mistake feels ten times worse.
+            </p>
+          </div>
+
+          <div class="comment-actions">
+            <button class="comment-action">Reply</button>
+            <button class="comment-action">Share</button>
+            <button class="comment-action">Report</button>
+            <button class="comment-action">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMMENT 09 -->
+    <div class="comment">
+      <div class="comment-content">
+        <div class="comment-vote">
+          <button class="vote-btn" aria-label="Upvote">▲</button>
+          <span class="comment-score">1.5k</span>
+          <button class="vote-btn" aria-label="Downvote">▼</button>
+        </div>
+
+        <div class="comment-body-wrapper">
+          <div class="comment-header">
+            <span class="comment-author">u/Dora</span>
+            <span class="comment-time">2h ago</span>
+          </div>
+
+          <div class="comment-text">
+            <p>
+              The issue is not “profiling exists,” it is how quickly it turns into a judgment of moral character. A profile can be a hypothesis and starting
+              point, but in a group setting it becomes a label, and labels carry stigma.
+            </p>
+          </div>
+
+          <div class="comment-actions">
+            <button class="comment-action">Reply</button>
+            <button class="comment-action">Share</button>
+            <button class="comment-action">Report</button>
+            <button class="comment-action">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMMENT 10 -->
+    <div class="comment">
+      <div class="comment-content">
+        <div class="comment-vote">
+          <button class="vote-btn" aria-label="Upvote">▲</button>
+          <span class="comment-score">1.1k</span>
+          <button class="vote-btn" aria-label="Downvote">▼</button>
+        </div>
+
+        <div class="comment-body-wrapper">
+          <div class="comment-header">
+            <span class="comment-author">u/Robin</span>
+            <span class="comment-time">1h ago</span>
+          </div>
+
+          <div class="comment-text">
+            <p>
+              Fairs. I can see now that we treated plausibility like evidence. Once we had a suspect in mind, everything started to look like confirmation.
+              That one is on me for introducing it and not keeping it strictly hypothetical.
+            </p>
+          </div>
+
+          <div class="comment-actions">
+            <button class="comment-action">Reply</button>
+            <button class="comment-action">Share</button>
+            <button class="comment-action">Report</button>
+            <button class="comment-action">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMMENT 11 - COLLAPSED DUE TO LOW SCORE (DOWNVOTED) -->
+    <div class="comment" id="collapsed-comment">
+      <div class="comment-collapsed" id="collapsed-preview">
+        <div class="comment-collapsed-header">
+          <span>Comment score below threshold</span>
+          <span>·</span>
+          <span>u/Doodlebob</span>
+          <span>·</span>
+          <span>-47 points</span>
+          <span>·</span>
+          <button class="expand-btn" onclick="expandComment()" aria-label="Expand collapsed comment">Click to expand</button>
+        </div>
+      </div>
+
+      <div class="comment-hidden" id="collapsed-content">
+        <div class="comment-content">
+          <div class="comment-vote">
+            <button class="vote-btn" aria-label="Upvote">▲</button>
+            <span class="comment-score">-47</span>
+            <button class="vote-btn" aria-label="Downvote">▼</button>
+          </div>
+
+          <div class="comment-body-wrapper">
+            <div class="comment-header">
+              <span class="comment-author">u/Doodlebob</span>
+              <span class="comment-time">58m ago</span>
+            </div>
+
+            <div class="comment-text">
+              <p>
+                Hot take: just take everyone to my lab and run an fMRI. If someone is lying, it will show. It would save time and settle the argument fast.
+              </p>
+            </div>
+
+            <div class="comment-actions">
+              <button class="comment-action" onclick="collapseComment()">Collapse</button>
+              <button class="comment-action">Reply</button>
+              <button class="comment-action">Share</button>
+              <button class="comment-action">Report</button>
+            </div>
+
+            <!-- Nested Reply to Downvoted Comment -->
+            <div class="comment-replies">
+              <div class="comment">
+                <div class="comment-content">
+                  <div class="comment-vote">
+                    <button class="vote-btn" aria-label="Upvote">▲</button>
+                    <span class="comment-score">234</span>
+                    <button class="vote-btn" aria-label="Downvote">▼</button>
+                  </div>
+
+                  <div class="comment-body-wrapper">
+                    <div class="comment-header">
+                      <span class="comment-author">u/Lisa</span>
+                      <span class="comment-time">41m ago</span>
+                    </div>
+
+                    <div class="comment-text">
+                      <p>
+                        No. fMRI is not a lie detector, and this is exactly the problem. You are reaching for something that sounds scientific to avoid doing
+                        basic evidence work.
+                      </p>
+                    </div>
+
+                    <div class="comment-actions">
+                      <button class="comment-action">Reply</button>
+                      <button class="comment-action">Share</button>
+                      <button class="comment-action">Report</button>
+                      <button class="comment-action">Save</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- /Nested Reply -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMMENT 12 -->
+    <div class="comment">
+      <div class="comment-content">
+        <div class="comment-vote">
+          <button class="vote-btn" aria-label="Upvote">▲</button>
+          <span class="comment-score">876</span>
+          <button class="vote-btn" aria-label="Downvote">▼</button>
+        </div>
+
+        <div class="comment-body-wrapper">
+          <div class="comment-header">
+            <span class="comment-author">u/Jake</span>
+            <span class="comment-time">1h ago</span>
+          </div>
+
+          <div class="comment-text">
+            <p>
+              For future reference, start with tangible factors. Where was the speaker, who walked by it, what changed, and what physical traces exist. You
+              will usually solve it before you ever need to talk about motives.
+            </p>
+          </div>
+
+          <div class="comment-actions">
+            <button class="comment-action">Reply</button>
+            <button class="comment-action">Share</button>
+            <button class="comment-action">Report</button>
+            <button class="comment-action">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMMENT 13 -->
+    <div class="comment">
+      <div class="comment-content">
+        <div class="comment-vote">
+          <button class="vote-btn" aria-label="Upvote">▲</button>
+          <span class="comment-score">654</span>
+          <button class="vote-btn" aria-label="Downvote">▼</button>
+        </div>
+
+        <div class="comment-body-wrapper">
+          <div class="comment-header">
+            <span class="comment-author">u/Aang</span>
+            <span class="comment-time">52m ago</span>
+          </div>
+
+          <div class="comment-text">
+            <p>
+              I would focus on repairing the relationship with X. Even if you did not intend to accuse him, the group dynamic turned it into an accusation.
+              A sincere apology plus acknowledging the bias will go a long way. An old friend once told me that Pride is not the opposite of shame, but its
+              source. True humility is the only antidote to shame, so have some and apologize!
+            </p>
+          </div>
+
+          <div class="comment-actions">
+            <button class="comment-action">Reply</button>
+            <button class="comment-action">Share</button>
+            <button class="comment-action">Report</button>
+            <button class="comment-action">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMMENT 14 -->
+    <div class="comment">
+      <div class="comment-content">
+        <div class="comment-vote">
+          <button class="vote-btn" aria-label="Upvote">▲</button>
+          <span class="comment-score">412</span>
+          <button class="vote-btn" aria-label="Downvote">▼</button>
+        </div>
+
+        <div class="comment-body-wrapper">
+          <div class="comment-header">
+            <span class="comment-author">u/Phineas</span>
+            <span class="comment-time">30m ago</span>
+          </div>
+
+          <div class="comment-text">
+            <p>
+              I'm glad the speaker was found, but I hope you understand how it felt. When you fit a criteria, you stop being a person and become a theory.
+              Apologize to your boy and I hope you can fix your speaker.
+            </p>
+          </div>
+
+          <div class="comment-actions">
+            <button class="comment-action">Reply</button>
+            <button class="comment-action">Share</button>
+            <button class="comment-action">Report</button>
+            <button class="comment-action">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+
+<!-- Footer -->
+<div class="footer">
+  Educational mockup; not affiliated with Reddit.
+</div>
+
+<script>
+  // Collapse/Expand functionality for low-score comment
+  function expandComment() {
+    document.getElementById('collapsed-preview').style.display = 'none';
+    document.getElementById('collapsed-content').classList.remove('comment-hidden');
+  }
+
+  function collapseComment() {
+    document.getElementById('collapsed-preview').style.display = 'block';
+    document.getElementById('collapsed-content').classList.add('comment-hidden');
+  }
+</script>
+
+</body>
+</html>
